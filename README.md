@@ -1,3 +1,5 @@
+
+
 # weave
 
 ![Weave Logo](weave_logo_1.webp)
@@ -8,81 +10,121 @@ Weave is a flexible framework for generating and validating synthetic data acros
 
 GitHub Repository: [https://github.com/ashikshafi08/weave.git](https://github.com/ashikshafi08/weave.git)
 
+## Installation
+
+You can install weave directly from GitHub using pip:
+```bash
+pip install git+https://github.com/ashikshafi08/weave.git
+```
+
+For development, you can clone the repository and install it in editable mode:
+
+```bash
+git clone https://github.com/ashikshafi08/weave.git
+cd weave
+pip install -e .
+```
+
 ## Key Features
 
 - Modular architecture for easy extensibility
-- Support for various data generators and LLM interfaces
+- Support for various data generators and LLM interfaces (OpenAI, Hugging Face, vLLM)
+- Customizable prompt templates for different tasks
 - Data validation and quality checking
-- Configuration-based setup
-- Comprehensive documentation and examples
+- Asynchronous operations for improved performance
+- Comprehensive logging for debugging and monitoring
 
-## Getting Started
+## Usage
 
-### Prerequisites
+Here's a basic example of how to use weave:
 
-- Python 3.7 or higher
-- pip (Python package installer)
+```python
+import asyncio
+import logging
+from weave import SyntheticDataFramework, ProgrammingGenerator, OpenAIProvider
 
-### Installation
+async def main():
+    # Configure logging
+    logging.basicConfig(level=logging.INFO)
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ashikshafi08/weave.git
-   cd weave
-   ```
+    # Initialize components
+    data_generator = ProgrammingGenerator()
+    llm_provider = OpenAIProvider(model="gpt-3.5-turbo", api_key="YOUR_API_KEY")
+    
+    # Create framework
+    framework = SyntheticDataFramework(data_generator, llm_provider)
+    
+    # Set custom prompt templates
+    framework.set_prompt_template("question_generation", "Generate a {difficulty} {language} programming question about {topic}. The answer should be: {answer}")
+    framework.set_prompt_template("answer_validation", "For the {language} question: {question}\nIs this a valid answer: {proposed_answer}? Answer with Yes or No.")
+    
+    # Generate dataset
+    dataset = await framework.generate_dataset(10)
+    
+    # Validate dataset
+    validations = await framework.validate_dataset(dataset)
+    
+    # Evaluate dataset
+    criteria = {"aspect": "code_quality", "scale": "1-10"}
+    evaluations = await framework.evaluate_dataset(dataset, criteria)
+    
+    print(f"Generated {len(dataset)} samples")
+    print(f"First sample: {dataset[0]}")
+    print(f"First validation: {validations[0]}")
+    print(f"First evaluation: {evaluations[0]}")
 
-2. Create a virtual environment (optional but recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-   ```
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-This will install all necessary packages for running and developing the weave project.
-
-If you're developing the project, you might want to install it in editable mode:
-   ```bash
-   pip install -e .
-   ```
-
-### Running the Example
-
-1. Make sure you're in the project root directory.
-
-2. Run the basic usage example:
-   ```bash
-   python -m weave.examples.basic_usage
-   ```
-
-   This will generate a small dataset of math problems using the MathGenerator and DummyInterface.
-
-### Project Structure
+## Project Structure
 
 - `weave/core/`: Contains the core framework classes
 - `weave/generators/`: Data generator implementations
-- `weave/llm_interfaces/`: LLM interface implementations
+- `weave/llm_interfaces/`: LLM interface implementations (OpenAI, Hugging Face, vLLM)
+- `weave/prompts/`: Prompt management and templates
 - `weave/config/`: Configuration files
 - `weave/examples/`: Usage examples
 
-### Customization
+## Customization
 
-To create your own data generator:
+### Creating a Custom Data Generator
 
 1. Create a new file in the `weave/generators/` directory.
 2. Implement a class that inherits from `DataGenerator`.
 3. Override the `generate()` and `get_supported_types()` methods.
 
-To create your own LLM interface:
+### Creating a Custom LLM Interface
 
 1. Create a new file in the `weave/llm_interfaces/` directory.
-2. Implement a class that inherits from `LLMInterface`.
-3. Override the `generate_question()`, `validate_answer()`, and `get_model_info()` methods.
+2. Implement a class that inherits from `BaseLLMProvider`.
+3. Override the required methods such as `generate_question()`, `validate_answer()`, `evaluate()`, etc.
 
-Update the `config/config.yaml` file to use your custom components.
+### Customizing Prompts
+
+Use the `set_prompt_template()` method of the `SyntheticDataFramework` or LLM provider to customize prompts for different tasks.
+
+## Configuration
+
+The `config/config.yaml` file allows you to set up your data generator, LLM provider, and other framework parameters. Here's an example:
+
+```yaml
+data_generator:
+  type: "ProgrammingGenerator"
+  params:
+    languages: ["python", "javascript", "java"]
+    difficulties: ["easy", "medium", "hard"]
+
+llm_provider:
+  type: "OpenAIProvider"
+  params:
+    model: "gpt-4o-mini"
+    api_key: "YOUR_API_KEY"
+
+framework:
+  num_samples: 100
+  logging_level: "INFO"
+```
 
 ## Contributing
 
@@ -94,4 +136,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Disclaimer
 
-This project is under active development. APIs may change, and features may be added or removed. Its a learning project and is not intended for production use as of now.
+This project is under active development. APIs may change, and features may be added or removed. It's a learning project and is not intended for production use as of now.
+```
+

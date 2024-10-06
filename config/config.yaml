@@ -3,9 +3,11 @@ data_generator:
   params:
     operation: "addition"
 
-llm_interface:
-  type: "DummyInterface"
-  params: {}
+llm_provider:
+  type: "OpenAIProvider"
+  params:
+    model: "gpt-3.5-turbo"
+    api_key: "YOUR_OPENAI_API_KEY"
 
 framework:
   num_samples: 10
