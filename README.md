@@ -49,7 +49,7 @@ async def main():
 
     # Initialize components
     data_generator = ProgrammingGenerator()
-    llm_provider = OpenAIProvider(model="gpt-3.5-turbo", api_key="YOUR_API_KEY")
+    llm_provider = OpenAIProvider(model="gpt-4o-mini", api_key="YOUR_API_KEY")
     
     # Create framework
     framework = SyntheticDataFramework(data_generator, llm_provider)
