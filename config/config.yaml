@@ -1,0 +1,11 @@
+data_generator:
+  type: "MathGenerator"
+  params:
+    operation: "addition"
+
+llm_interface:
+  type: "DummyInterface"
+  params: {}
+
+framework:
+  num_samples: 10
