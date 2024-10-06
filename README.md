@@ -1,5 +1,7 @@
 # weave
 
+![Weave Logo](weave_logo_1.webp)
+
 Weave is a flexible framework for generating and validating synthetic data across various domains. The system leverages Language Models (LLMs) to create high-quality, domain-specific datasets that can be used for training AI models, testing, and research purposes.
 
 **Note: This project is in its very early stages and is being actively developed in public. Expect frequent changes and improvements.**
