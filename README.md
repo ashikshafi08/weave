@@ -40,6 +40,13 @@ GitHub Repository: [https://github.com/ashikshafi08/weave.git](https://github.co
    pip install -r requirements.txt
    ```
 
+This will install all necessary packages for running and developing the weave project.
+
+If you're developing the project, you might want to install it in editable mode:
+   ```bash
+   pip install -e .
+   ```
+
 ### Running the Example
 
 1. Make sure you're in the project root directory.
