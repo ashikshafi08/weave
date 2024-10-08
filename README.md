@@ -104,6 +104,10 @@ if __name__ == "__main__":
 
 Use the `set_prompt_template()` method of the `SyntheticDataFramework` or LLM provider to customize prompts for different tasks.
 
+## Roadmap
+
+To see the rough plans for future development and features, check out our [roadmap](roadmap.md). This is not set in stone and is subject to change as we receive feedback and decide what features are most important.
+
 ## Configuration
 
 The `config/config.yaml` file allows you to set up your data generator, LLM provider, and other framework parameters. Here's an example:
