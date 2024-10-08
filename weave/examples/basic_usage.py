@@ -1,5 +1,5 @@
 import asyncio
-import yaml
+import json
 import logging
 from weave.core.framework import SyntheticDataFramework
 from weave.generators.programming_generator import ProgrammingGenerator
@@ -10,8 +10,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 
 async def main():
     # Load configuration
-    with open('config/config.yaml', 'r') as f:
-        config = yaml.safe_load(f)
+    with open('config/config.json', 'r') as f:
+        config = json.load(f)
 
     # Initialize components
     data_generator = ProgrammingGenerator()
