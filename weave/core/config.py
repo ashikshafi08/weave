@@ -3,6 +3,7 @@ import yaml
 from typing import Any, Dict
 import argparse
 
+
 class Config:
     def __init__(self, config_path: str = None):
         self.config = {}

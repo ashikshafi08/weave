@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Tuple, List, Optional
 from weave.core.plugin import PluginRegistry
 
+
 class DataGenerator(ABC):
     @abstractmethod
     def generate(self, **kwargs) -> Tuple[Any, Dict[str, Any]]:
@@ -28,5 +29,11 @@ class DataGenerator(ABC):
     def augment(self, data: Any, context: Dict[str, Any]) -> Tuple[Any, Dict[str, Any]]:
         """Augment a data point and its context."""
         pass
+
+    @abstractmethod
+    def save_dataset(self, dataset_path: str) -> None:
+        """Save the dataset to a given path."""
+        pass
+
 
 data_generator_registry = PluginRegistry()

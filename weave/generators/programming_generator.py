@@ -1,8 +1,10 @@
+from abc import ABC
 from typing import Any, Dict, Tuple, List
 from weave.core.data_generator import DataGenerator
 import random
 
-class ProgrammingGenerator(DataGenerator):
+
+class ProgrammingGenerator(DataGenerator, ABC):
     def __init__(self):
         self.languages = ["Python", "JavaScript", "Java", "C++"]
         self.topics = ["Arrays", "Strings", "Linked Lists", "Trees", "Sorting", "Searching"]

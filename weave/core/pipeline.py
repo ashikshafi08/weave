@@ -8,8 +8,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Pipeline:
-    def __init__(self, config: Config, data_generator: DataGenerator, task_creator: TaskCreator, llm_provider: BaseLLMProvider):
+    def __init__(self, config: Config, data_generator: DataGenerator, task_creator: TaskCreator,
+                 llm_provider: BaseLLMProvider):
         self.config = config
         self.data_generator = data_generator
         self.task_creator = task_creator

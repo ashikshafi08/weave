@@ -1,9 +1,11 @@
 # weave/data_generators/text_generator.py
 import random
+from abc import ABC
 from typing import Any, Dict, Tuple, List
 from weave.core.data_generator import DataGenerator, data_generator_registry
 
-class TextGenerator(DataGenerator):
+
+class TextGenerator(DataGenerator, ABC):
     def __init__(self):
         self.texts = [
             "The quick brown fox jumps over the lazy dog.",
@@ -32,5 +34,10 @@ class TextGenerator(DataGenerator):
         punctuation = "!?.,;"
         augmented_data = data + random.choice(punctuation)
         return augmented_data, context
+
+    def save_dataset(self, dataset_path: str) -> None:
+        with open(dataset_path, 'w') as f:
+            f.write('\n'.join(map(str, self.texts)))
+
 
 data_generator_registry.register("text", TextGenerator)

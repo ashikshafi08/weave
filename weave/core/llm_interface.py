@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
+
 class LLMInterface(ABC):
     @abstractmethod
     def generate_question(self, answer: Any, context: Dict[str, Any]) -> str:
