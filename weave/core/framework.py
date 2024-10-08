@@ -1,10 +1,9 @@
 # weave/core/framework.py
 from typing import List, Dict, Any
-from weave.core.data_generator import DataGenerator, data_generator_registry
-from weave.core.task_creator import TaskCreator, task_creator_registry
+from weave.core.base import DataGenerator, TaskCreator, LLMProvider
 from weave.core.config import Config
-from weave.llm_interfaces.base import BaseLLMProvider
 from weave.core.pipeline import Pipeline
+from weave.core.registry import data_generator_registry, task_creator_registry, llm_provider_registry
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,14 +24,15 @@ class SyntheticDataFramework:
         task_creator_name = self.config.get('task_creator.name')
         return task_creator_registry.get(task_creator_name)(self.llm_provider)
 
-    def _load_llm_provider(self) -> BaseLLMProvider:
+    def _load_llm_provider(self) -> LLMProvider:
         llm_provider_name = self.config.get('llm_provider.name')
-        llm_provider_class = BaseLLMProvider.get_provider(llm_provider_name)
+        llm_provider_class = llm_provider_registry.get(llm_provider_name)
         return llm_provider_class(**self.config.get('llm_provider.params', {}))
 
     async def generate_dataset(self, num_samples: int) -> List[Dict[str, Any]]:
         logger.info(f"Generating dataset with {num_samples} samples")
-        return await self.pipeline.run(num_samples)
+        self.config.set('num_samples', num_samples)
+        return await self.pipeline.run()
 
     async def evaluate_dataset(self, dataset: List[Dict[str, Any]], criteria: Dict[str, Any]) -> List[Dict[str, Any]]:
         logger.info(f"Evaluating dataset with {len(dataset)} samples")
@@ -52,3 +52,15 @@ class SyntheticDataFramework:
 
     def get_model_info(self) -> Dict[str, Any]:
         return self.llm_provider.get_model_info()
+
+    def add_pipeline_stage(self, stage_func):
+        self.pipeline.add_stage(stage_func)
+
+    def on_error(self, callback):
+        self.pipeline.hook_manager.register_hook('on_error', callback)
+
+    def after_data_generation(self, callback):
+        self.pipeline.hook_manager.register_hook('after_data_generation', callback)
+
+    def after_task_creation(self, callback):
+        self.pipeline.hook_manager.register_hook('after_task_creation', callback)

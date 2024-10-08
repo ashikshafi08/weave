@@ -1,47 +1,34 @@
 import openai
 from typing import Any, Dict, List
-from .base import BaseLLMProvider
+from weave.core.base import LLMProvider
+from weave.core.registry import llm_provider_registry
 
-class OpenAIProvider(BaseLLMProvider):
+class OpenAIProvider(LLMProvider):
     def __init__(self, model: str, api_key: str):
-        super().__init__()
         self.model = model
         openai.api_key = api_key
 
-    async def generate_question(self, answer: Any, context: Dict[str, Any]) -> str:
-        prompt = self.prompt_manager.render("question_generation", answer=answer, context=context)
+    async def generate(self, prompt: str, **kwargs) -> str:
         response = await openai.ChatCompletion.acreate(
             model=self.model,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            **kwargs
         )
         return response.choices[0].message.content
 
-    async def validate_answer(self, question: str, proposed_answer: Any, correct_answer: Any) -> bool:
-        prompt = self.prompt_manager.render("answer_validation", question=question, proposed_answer=proposed_answer, correct_answer=correct_answer)
-        response = await openai.ChatCompletion.acreate(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return response.choices[0].message.content.strip().lower() == "yes"
-
-    async def evaluate(self, context: Dict[str, Any], criteria: Dict[str, Any]) -> Dict[str, Any]:
-        prompt = self.prompt_manager.render("evaluation", context=context, criteria=criteria)
-        response = await openai.ChatCompletion.acreate(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return {"evaluation": response.choices[0].message.content}
-
-    async def explain(self, evaluation_result: Dict[str, Any]) -> str:
-        prompt = self.prompt_manager.render("explanation", evaluation_result=evaluation_result)
-        response = await openai.ChatCompletion.acreate(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return response.choices[0].message.content
+    async def evaluate(self, data: Dict[str, Any], criteria: Dict[str, Any]) -> Dict[str, Any]:
+        prompt = f"Evaluate the following data based on these criteria: {criteria}\n\nData: {data}"
+        response = await self.generate(prompt)
+        return {"evaluation": response}
 
     def get_supported_criteria(self) -> List[str]:
         return ["grammar", "coherence", "relevance", "creativity"]
 
     def get_model_info(self) -> Dict[str, Any]:
         return {"name": self.model, "provider": "OpenAI"}
+
+    def initialize(self, config: Dict[str, Any]) -> None:
+        self.model = config.get('model', self.model)
+        openai.api_key = config.get('api_key', openai.api_key)
+
+llm_provider_registry.register("openai", OpenAIProvider)

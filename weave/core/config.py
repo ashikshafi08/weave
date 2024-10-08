@@ -1,41 +1,46 @@
 # weave/weave/core/config.py
-import yaml
-from typing import Any, Dict
-import argparse
+from pydantic import BaseModel, Field
+from typing import Dict, Any, List
+import json
+
+class LLMProviderConfig(BaseModel):
+    name: str
+    params: Dict[str, Any] = Field(default_factory=dict)
+
+class DataGeneratorConfig(BaseModel):
+    name: str
+    params: Dict[str, Any] = Field(default_factory=dict)
+
+class TaskCreatorConfig(BaseModel):
+    name: str
+    params: Dict[str, Any] = Field(default_factory=dict)
+
+class WeaveConfig(BaseModel):
+    data_generator: DataGeneratorConfig
+    task_creator: TaskCreatorConfig
+    llm_provider: LLMProviderConfig
+    pipeline_stages: List[str] = Field(default_factory=list)
+    num_samples: int = 100
+
+    @classmethod
+    def from_json(cls, file_path: str):
+        with open(file_path, 'r') as f:
+            config_data = json.load(f)
+        return cls(**config_data)
+
+    def to_json(self, file_path: str):
+        with open(file_path, 'w') as f:
+            json.dump(self.dict(), f, indent=2)
 
 class Config:
     def __init__(self, config_path: str = None):
-        self.config = {}
-        if config_path:
-            with open(config_path, 'r') as f:
-                self.config = yaml.safe_load(f)
+        self.config = WeaveConfig.from_json(config_path) if config_path else WeaveConfig()
 
     def get(self, key: str, default: Any = None) -> Any:
-        keys = key.split('.')
-        value = self.config
-        for k in keys:
-            if isinstance(value, dict) and k in value:
-                value = value[k]
-            else:
-                return default
-        return value
+        return self.config.dict().get(key, default)
 
     def set(self, key: str, value: Any) -> None:
-        keys = key.split('.')
-        config = self.config
-        for k in keys[:-1]:
-            if k not in config:
-                config[k] = {}
-            config = config[k]
-        config[keys[-1]] = value
+        setattr(self.config, key, value)
 
     def save(self, config_path: str) -> None:
-        with open(config_path, 'w') as f:
-            yaml.dump(self.config, f)
-
-    @classmethod
-    def from_cli(cls):
-        parser = argparse.ArgumentParser(description="Weave Synthetic Data Generation Framework")
-        parser.add_argument('--config', type=str, help='Path to the configuration file')
-        args, _ = parser.parse_known_args()
-        return cls(args.config)
+        self.config.to_json(config_path)

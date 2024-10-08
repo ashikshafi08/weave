@@ -1,31 +1,24 @@
 import asyncio
-import json
 import logging
 from weave.core.framework import SyntheticDataFramework
-from weave.generators.programming_generator import ProgrammingGenerator
-from weave.llm_interfaces.openai_provider import OpenAIProvider
+from weave.core.config import Config
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 async def main():
     # Load configuration
-    with open('config/config.json', 'r') as f:
-        config = json.load(f)
-
-    # Initialize components
-    data_generator = ProgrammingGenerator()
-    llm_provider = OpenAIProvider(**config['llm_provider']['params'])
+    config = Config('config/config.json')
 
     # Create framework
-    framework = SyntheticDataFramework(data_generator, llm_provider)
+    framework = SyntheticDataFramework(config)
 
     # Set custom prompt templates
     framework.set_prompt_template("question_generation", "Generate a {context[difficulty]} {context[language]} programming question about {context[topic]}. The answer should be: {answer}")
     framework.set_prompt_template("answer_validation", "For the {context[language]} question: {question}\nIs this a valid answer: {proposed_answer}? Answer with Yes or No.")
 
     # Generate dataset
-    dataset = await framework.generate_dataset(config['framework']['num_samples'])
+    dataset = await framework.generate_dataset(config.get('framework.num_samples'))
 
     # Validate dataset
     validations = await framework.validate_dataset(dataset)
