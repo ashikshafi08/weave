@@ -1,9 +1,9 @@
 # weave/core/framework.py
 from typing import List, Dict, Any
-from weave.core.base import DataGenerator, TaskCreator, LLMProvider
+from weave.core.base import TaskCreator, LLMProvider
 from weave.core.config import Config
 from weave.core.pipeline import Pipeline
-from weave.core.registry import data_generator_registry, task_creator_registry, llm_provider_registry
+from weave.data_providers.factory import create_data_provider
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,14 +11,10 @@ logger = logging.getLogger(__name__)
 class SyntheticDataFramework:
     def __init__(self, config: Config):
         self.config = config
-        self.data_generator = self._load_data_generator()
+        self.data_provider = create_data_provider(config.get('data_provider'))
         self.task_creator = self._load_task_creator()
         self.llm_provider = self._load_llm_provider()
-        self.pipeline = Pipeline(config, self.data_generator, self.task_creator, self.llm_provider)
-
-    def _load_data_generator(self) -> DataGenerator:
-        data_generator_name = self.config.get('data_generator.name')
-        return data_generator_registry.get(data_generator_name)()
+        self.pipeline = Pipeline(config, self.data_provider, self.task_creator, self.llm_provider)
 
     def _load_task_creator(self) -> TaskCreator:
         task_creator_name = self.config.get('task_creator.name')
