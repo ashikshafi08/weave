@@ -2,10 +2,14 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 from weave.core.plugin import PluginRegistry
+from weave.prompts.template import PromptTemplateManager
 
 class TaskCreator(ABC):
+    def __init__(self, prompt_manager: PromptTemplateManager):
+        self.prompt_manager = prompt_manager
+
     @abstractmethod
-    def create_task(self, data: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_task(self, data: Any, context: Dict[str, Any]) -> Dict[str, Any]:
         """Create a task from a data point and its context."""
         pass
 
@@ -15,18 +19,14 @@ class TaskCreator(ABC):
         pass
 
 class LLMTaskCreator(TaskCreator):
-    def __init__(self, llm_provider):
+    def __init__(self, llm_provider, prompt_manager: PromptTemplateManager):
+        super().__init__(prompt_manager)
         self.llm_provider = llm_provider
 
-    def create_task(self, data: Any, context: Dict[str, Any]) -> Dict[str, Any]:
-        prompt = self.generate_prompt(data, context)
-        response = self.llm_provider.generate(prompt)
+    async def create_task(self, data: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+        prompt = self.prompt_manager.render_template("task_creation", data=data, context=context)
+        response = await self.llm_provider.generate(prompt)
         return self.parse_response(response)
-
-    @abstractmethod
-    def generate_prompt(self, data: Any, context: Dict[str, Any]) -> str:
-        """Generate a prompt for the LLM based on the data and context."""
-        pass
 
     @abstractmethod
     def parse_response(self, response: str) -> Dict[str, Any]:

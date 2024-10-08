@@ -13,9 +13,15 @@ async def main():
     # Create framework
     framework = SyntheticDataFramework(config)
 
-    # Set custom prompt templates
-    framework.set_prompt_template("question_generation", "Generate a {context[difficulty]} {context[language]} programming question about {context[topic]}. The answer should be: {answer}")
-    framework.set_prompt_template("answer_validation", "For the {context[language]} question: {question}\nIs this a valid answer: {proposed_answer}? Answer with Yes or No.")
+    # Add custom prompt templates
+    framework.add_prompt_template(
+        "question_generation",
+        "Generate a {{context.difficulty}} {{context.language}} programming question about {{context.topic}}. The answer should be: {{answer}}"
+    )
+    framework.add_prompt_template(
+        "answer_validation",
+        "For the {{context.language}} question: {{question}}\nIs this a valid answer: {{proposed_answer}}? Answer with Yes or No."
+    )
 
     # Generate dataset
     dataset = await framework.generate_dataset(config.get('framework.num_samples'))

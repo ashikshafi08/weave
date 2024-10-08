@@ -5,6 +5,7 @@ from weave.core.config import Config
 from weave.core.pipeline import Pipeline
 from weave.data_providers.factory import create_data_provider
 import logging
+from weave.prompts.template import PromptTemplateManager
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ class SyntheticDataFramework:
         self.task_creator = self._load_task_creator()
         self.llm_provider = self._load_llm_provider()
         self.pipeline = Pipeline(config, self.data_provider, self.task_creator, self.llm_provider)
+        self.prompt_manager = PromptTemplateManager()
 
     def _load_task_creator(self) -> TaskCreator:
         task_creator_name = self.config.get('task_creator.name')
@@ -60,3 +62,12 @@ class SyntheticDataFramework:
 
     def after_task_creation(self, callback):
         self.pipeline.hook_manager.register_hook('after_task_creation', callback)
+
+    def add_prompt_template(self, name: str, template_string: str):
+        self.prompt_manager.add_template(name, template_string)
+
+    def get_prompt_template(self, name: str) -> str:
+        return self.prompt_manager.get_template(name)
+
+    def render_prompt(self, name: str, **kwargs: Any) -> str:
+        return self.prompt_manager.render_template(name, **kwargs)
