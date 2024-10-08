@@ -18,7 +18,10 @@ async def main():
 
     # Customize the validation prompt
     provider.set_validation_template(
-        "Question: {{ question }}\nProposed Answer: {{ proposed_answer }}\nCorrect Answer: {{ correct_answer }}\nIs the proposed answer mathematically equivalent to the correct answer? Answer with 'Yes' or 'No'."
+        "Question: {{ question }}\n"
+        "Proposed Answer: {{ answer }}\n"
+        "Correct Answer: {{ correct_answer }}\n"
+        "Is the proposed answer mathematically equivalent to the correct answer? Answer with 'Yes' or 'No'."
     )
 
     # Validate an answer

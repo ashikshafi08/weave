@@ -2,6 +2,7 @@
 from typing import Any, Dict, List
 from weave.core.task_creator import LLMTaskCreator, task_creator_registry
 
+
 class QATaskCreator(LLMTaskCreator):
     def generate_prompt(self, data: Any, context: Dict[str, Any]) -> str:
         return f"Generate a question based on the following text: {data}"
@@ -11,5 +12,6 @@ class QATaskCreator(LLMTaskCreator):
 
     def get_supported_task_types(self) -> List[str]:
         return ["question_answering"]
+
 
 task_creator_registry.register("qa", QATaskCreator)

@@ -9,6 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class SyntheticDataFramework:
     def __init__(self, config: Config):
         self.config = config
@@ -41,9 +42,9 @@ class SyntheticDataFramework:
             try:
                 evaluation = await self.llm_provider.evaluate(data_point, criteria)
                 evaluations.append(evaluation)
-                logger.debug(f"Evaluated sample {i+1}/{len(dataset)}")
+                logger.debug(f"Evaluated sample {i + 1}/{len(dataset)}")
             except Exception as e:
-                logger.error(f"Error evaluating sample {i+1}: {str(e)}")
+                logger.error(f"Error evaluating sample {i + 1}: {str(e)}")
         logger.info("Dataset evaluation complete")
         return evaluations
 

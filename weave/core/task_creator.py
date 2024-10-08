@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 from weave.core.plugin import PluginRegistry
 
+
 class TaskCreator(ABC):
     @abstractmethod
     def create_task(self, data: Any, context: Dict[str, Any]) -> Dict[str, Any]:
@@ -13,6 +14,7 @@ class TaskCreator(ABC):
     def get_supported_task_types(self) -> List[str]:
         """Return a list of supported task types."""
         pass
+
 
 class LLMTaskCreator(TaskCreator):
     def __init__(self, llm_provider):
@@ -32,5 +34,6 @@ class LLMTaskCreator(TaskCreator):
     def parse_response(self, response: str) -> Dict[str, Any]:
         """Parse the LLM response into a task dictionary."""
         pass
+
 
 task_creator_registry = PluginRegistry()

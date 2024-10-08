@@ -3,6 +3,7 @@ import asyncio
 from weave.core.framework import SyntheticDataFramework
 from weave.core.config import Config
 
+
 async def main():
     config = Config.from_cli()
     framework = SyntheticDataFramework(config)
@@ -20,6 +21,7 @@ async def main():
     print("\nEvaluations:")
     for evaluation in evaluations:
         print(evaluation)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

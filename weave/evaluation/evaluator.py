@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
+
 class Evaluator(ABC):
     @abstractmethod
     def evaluate(self, task: Dict[str, Any], response: Any, criteria: Dict[str, Any]) -> Dict[str, Any]:
         """Evaluate a response to a task based on given criteria."""
         pass
+
 
 class LLMEvaluator(Evaluator):
     def __init__(self, llm_provider):
