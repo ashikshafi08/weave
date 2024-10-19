@@ -1,2 +1,0 @@
-from .math_generator import MathGenerator
-from .programming_generator import ProgrammingGenerator
