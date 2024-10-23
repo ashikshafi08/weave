@@ -273,9 +273,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - 💬 [Discord Community](https://discord.gg/weave)
 - 📧 [Email Support](mailto:support@weaveframework.com)
 
-## 🙏 Credits
 
-Created and maintained by [Your Name/Organization]
 
 ## Contributing
 
