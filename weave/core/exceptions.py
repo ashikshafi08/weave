@@ -47,3 +47,30 @@ class PluginError(WeaveException):
 class PromptError(WeaveException):
     """Exception raised for errors related to prompt management."""
     pass
+
+
+class DataQualityError(WeaveException):
+    """Exception raised when generated data doesn't meet quality requirements."""
+    pass
+
+class PromptTemplateError(WeaveException):
+    """Exception raised for errors in prompt template formatting or rendering."""
+    pass
+
+class LLMResponseError(LLMError):
+    """Exception raised when LLM response is invalid or cannot be parsed."""
+    pass
+
+class DataSourceEmptyError(DataSourceError):
+    """Exception raised when a data source is empty or exhausted."""
+    pass
+
+class InvalidPluginError(PluginError):
+    """Exception raised when a plugin doesn't implement required interfaces."""
+    pass
+
+class PipelineStageError(PipelineExecutionError):
+    """Exception raised when a specific pipeline stage fails."""
+    def __init__(self, stage_name: str, message: str):
+        self.stage_name = stage_name
+        super().__init__(f"Stage '{stage_name}' failed: {message}")
