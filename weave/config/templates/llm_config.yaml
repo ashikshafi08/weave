@@ -1,0 +1,102 @@
+# LLM Provider Configuration Template
+
+# OpenAI Configuration
+openai:
+  type: openai
+  api_key: ${OPENAI_API_KEY}  # Set this in your environment variables
+  model: gpt-4-1106-preview  # Latest GPT-4 Turbo model
+  temperature: 0.7
+  max_tokens: 4096  # Increased for better completion
+  rate_limit: 60  # requests per minute
+  cache:
+    enabled: true
+    max_size: 1000
+    ttl: 3600  # seconds
+  advanced:
+    response_format: { "type": "json" }  # For structured output
+    seed: 42  # For reproducibility
+    tools: []  # For function calling
+    frequency_penalty: 0.0
+    presence_penalty: 0.0
+
+# HuggingFace Local Model Configuration
+huggingface_local:
+  type: huggingface
+  model_name: mistralai/Mixtral-8x7B-Instruct-v0.1  # Latest Mixtral model
+  device: cuda  # or cpu
+  max_length: 4096
+  temperature: 0.7
+  use_auth_token: ${HUGGINGFACE_TOKEN}  # Optional, for private models
+  cache:
+    enabled: true
+    max_size: 1000
+    ttl: 3600
+  advanced:
+    quantization: 4  # 4-bit quantization for efficiency
+    trust_remote_code: true
+    torch_dtype: bfloat16
+    load_in_8bit: false
+    load_in_4bit: true
+    use_flash_attention_2: true
+
+# HuggingFace Inference API Configuration
+huggingface_api:
+  type: huggingface_api
+  api_token: ${HUGGINGFACE_API_TOKEN}
+  model_name: meta-llama/Llama-2-70b-chat-hf  # Llama 2 70B
+  cache:
+    enabled: true
+    max_size: 1000
+    ttl: 3600
+  advanced:
+    wait_for_model: true
+    use_cache: true
+    max_retries: 3
+
+# Advanced Configuration Options
+advanced:
+  retry:
+    max_attempts: 3
+    initial_delay: 1  # seconds
+    max_delay: 10  # seconds
+    backoff_factor: 2
+  timeout:
+    connect: 10  # seconds
+    read: 30  # seconds
+  logging:
+    level: INFO
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    handlers:
+      - type: console
+        level: INFO
+      - type: file
+        level: DEBUG
+        filename: weave.log
+        max_bytes: 10485760  # 10MB
+        backup_count: 5
+  monitoring:
+    enabled: true
+    metrics:
+      - latency
+      - token_usage
+      - error_rate
+      - prompt_tokens
+      - completion_tokens
+      - total_tokens
+      - request_time
+      - model_name
+      - cache_hits
+    export:
+      prometheus: true
+      wandb: true
+      mlflow: true
+  security:
+    sanitize_prompts: true
+    max_prompt_tokens: 4096
+    content_filtering: true
+    api_key_rotation: true
+  performance:
+    batch_size: 10
+    parallel_requests: 5
+    use_streaming: true
+    compression: true 
