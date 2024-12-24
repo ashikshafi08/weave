@@ -1,5 +1,4 @@
-
-
+"""
 # weave
 
 ![Weave Logo](weave.png)
@@ -25,255 +24,236 @@ cd weave
 pip install -e .
 ```
 
-
-
 ## 🌟 Key Features
 
 - 🔌 **Modular Architecture**: Easily extend and customize components
-- 🤖 **Multiple LLM Support**: Use OpenAI, Hugging Face, or custom LLM providers
-- 📝 **Flexible Prompt Management**: Customize and version prompts for different use cases
-- ✨ **Data Validation**: Ensure quality and correctness of generated data
-- 🔄 **Pipeline-based Processing**: Chain operations for complex data generation
-- 🔧 **Plugin System**: Add custom functionality through plugins
+- 🤖 **Multiple LLM Support**: OpenAI and Hugging Face integration with customizable providers
+- 📝 **Dynamic Prompts**: Customizable templates with variable substitution
+- ✨ **Data Augmentation**: Flexible noising and transformation pipeline
+- 🔄 **Async-First**: Built for high-performance async operations
+- 🔧 **Type Safety**: Full type hints and runtime validation
 
 ## 🏗️ Architecture
 
-The Weave framework consists of several core components that work together to generate synthetic data:
+The Weave framework consists of several core components:
 
 ### Core Components
 
-1. **WeaveFramework** (`framework.py`)
-   - Central orchestrator for the entire process
-   - Manages configuration and component lifecycle
-   - Coordinates data generation pipeline
+1. **LLM Providers** (`llms/`)
+   - `OpenAILLM`: Full support for GPT-4, GPT-3.5, and embeddings
+   - `HuggingFaceLLM`: Integration with Hugging Face's model hub
+   - Customizable API settings and error handling
+   - Token usage tracking and cost estimation
 
-2. **Pipeline** (`pipeline.py`)
-   - Defines data generation workflow
-   - Manages sequence of operations
-   - Handles data flow between components
+2. **Generators** (`generators/`)
+   - `MathGenerator`: Mathematical problem generation
+   - `CodeGenerator`: Code problem and solution generation
+   - `NLUGenerator`: Natural language understanding tasks
+   - Customizable templates and difficulty levels
 
-3. **DataSource** (`data_source.py`)
-   - Provides initial data or templates
-   - Supports multiple data sources (files, databases, APIs)
-   - Handles data loading and sampling
+3. **Noisers** (`noisers/`)
+   - `PersonaNoiser`: Style and persona-based text transformation
+   - `RandomTyposNoiser`: Realistic typo and error introduction
+   - Template-based noise generation
+   - Configurable noise levels and types
 
-4. **DataProcessor** (`data_processor.py`)
-   - Transforms and prepares data
-   - Implements data cleaning and normalization
-   - Supports custom processing logic
-
-5. **LLMInterface** (`llm_interface.py`)
-   - Manages LLM interactions
-   - Handles prompt submission and response processing
-   - Implements rate limiting and error handling
-
-6. **PromptManager** (`prompt_manager.py`)
-   - Manages prompt templates
-   - Supports dynamic prompt generation
-   - Handles template versioning
-
-7. **DataGenerator** (`data_generator.py`)
-   - Converts LLM outputs to structured data
-   - Implements parsing and formatting logic
-   - Ensures data structure consistency
-
-8. **DataValidator** (`data_validator.py`)
-   - Validates generated data
-   - Implements quality checks
-   - Enforces domain-specific rules
-
-9. **PluginManager** (`plugin_manager.py`)
-   - Manages framework extensions
-   - Handles plugin lifecycle
-   - Provides plugin discovery and loading
-
-### Component Interactions
-
-```mermaid
-graph TD
-    A[WeaveFramework] --> B[Pipeline]
-    B --> C[DataSource]
-    B --> D[DataProcessor]
-    B --> E[LLMInterface]
-    B --> F[DataGenerator]
-    B --> G[DataValidator]
-    E --> H[PromptManager]
-    A --> I[PluginManager]
-```
+4. **Core Utilities** (`core/`)
+   - Base classes and interfaces
+   - Error handling and validation
+   - Common utilities and helpers
 
 ## 🚀 Quick Start
 
+### Using OpenAI Provider
+
 ```python
-import asyncio
-from weave import WeaveFramework
+from weave.llms import OpenAILLM
+from weave.generators import MathGenerator
+from weave.noisers import PersonaNoiser, RandomTyposNoiser
 
-# Configure the framework
-config = {
-    'pipeline': {
-        'type': 'default',
-        'stages': ['source', 'process', 'generate', 'validate']
-    },
-    'data_source': {
-        'type': 'json',
-        'path': 'templates.json'
-    },
-    'llm_interface': {
-        'type': 'openai',
-        'model': 'gpt-4',
-        'api_key': 'your-api-key'
-    }
-}
+# Initialize LLM provider
+llm = OpenAILLM(
+    model="gpt-3.5-turbo",
+    api_key="your-api-key"  # or use OPENAI_API_KEY env var
+)
 
-# Initialize and run
-async def generate_data():
-    framework = WeaveFramework(config)
-    dataset = await framework.generate_dataset(num_samples=10)
-    return dataset
+# Create noisers
+persona_noiser = PersonaNoiser(
+    model_connector=llm,
+    persona_name="High School Student",
+    persona_traits=["casual", "informal", "uses-emojis"]
+)
 
-if __name__ == "__main__":
-    asyncio.run(generate_data())
+typo_noiser = RandomTyposNoiser(
+    model_connector=llm,
+    error_frequency="moderate",
+    error_severity="mild"
+)
+
+# Initialize generator with noisers
+math_gen = MathGenerator(
+    problem_type="word",
+    difficulty="medium",
+    model_connector=llm,
+    noisers=[persona_noiser, typo_noiser]
+)
+
+# Generate problems
+async def generate_problems():
+    # Single problem
+    problem, solution = await math_gen.generate()
+    
+    # Batch of problems
+    problems = await math_gen.batch_generate(batch_size=5)
+    return problems
 ```
 
-## 📚 Advanced Usage
-
-### Custom Data Source
+### Using Hugging Face Provider
 
 ```python
-from weave.core.data_source import DataSource
-from weave.core.decorators import register_module
+from weave.llms import HuggingFaceLLM
+from weave.generators import CodeGenerator
 
-@register_module('data_sources', 'custom')
-class CustomDataSource(DataSource):
-    async def fetch(self, num_samples: int) -> List[Dict[str, Any]]:
-        # Implement custom data fetching logic
-        pass
+# Initialize Hugging Face provider
+llm = HuggingFaceLLM(
+    model_id="bigcode/starcoder",
+    api_key="your-api-key"  # or use HF_API_TOKEN env var
+)
 
-    async def load_data(self, source: str) -> None:
-        # Implement custom data loading logic
-        pass
+# Initialize code generator
+code_gen = CodeGenerator(
+    problem_type="algorithm",
+    language="python",
+    difficulty="medium",
+    model_connector=llm
+)
+
+# Generate coding problems
+async def generate_code_problems():
+    problem, solution = await code_gen.generate()
+    return problem, solution
 ```
 
-### Custom Processor
+### Using NLU Generator
 
 ```python
-from weave.core.data_processor import DataProcessor
-from weave.core.decorators import register_module
+from weave.generators import NLUGenerator
 
-@register_module('data_processors', 'custom')
-class CustomProcessor(DataProcessor):
-    async def process(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        # Implement custom processing logic
-        pass
+# Initialize NLU generator
+nlu_gen = NLUGenerator(
+    task_type="classification",
+    difficulty="medium",
+    model_connector=llm
+)
+
+# Generate NLU tasks
+async def generate_nlu_tasks():
+    # Generate a sentiment analysis task
+    task, solution = await nlu_gen.generate()
+    return task, solution
+```
+
+## 📝 Customizing Templates
+
+Each generator and noiser supports customizable templates:
+
+```python
+# Custom math problem template
+math_gen.word_problem_template = """
+Generate a ${difficulty} word problem about ${topic}.
+The problem should involve ${operations} and satisfy these constraints:
+${constraints}
+
+${format_instructions}
+"""
+
+# Custom persona noising template
+persona_noiser.prompt_template = """
+Rewrite the following text in the style of ${persona_name}.
+Key traits: ${persona_traits}
+Style guide: ${style_instructions}
+
+Original text:
+${original_text}
+
+Rewritten text:
+"""
 ```
 
 ## 🔧 Configuration
 
-Weave uses YAML configuration files to define component settings and pipeline stages:
-
-```yaml
-# config.yaml
-pipeline:
-  type: default
-  stages:
-    - source
-    - process
-    - generate
-    - validate
-
-data_source:
-  type: json
-  path: templates.json
-  cache: true
-
-llm_interface:
-  type: openai
-  model: gpt-4
-  api_key: ${OPENAI_API_KEY}
-  rate_limit: 60
-
-validator:
-  type: default
-  rules:
-    - schema_validation
-    - quality_check
-```
-
-## 🧩 Plugin System
-
-Weave supports plugins for extending functionality:
+Generators and noisers accept various configuration options:
 
 ```python
-from weave.core.plugin_manager import PluginManager
-
-# Register a plugin
-plugin_manager = PluginManager()
-plugin_manager.register_plugin('custom_processor', CustomProcessor)
-
-# Use in framework
-framework = WeaveFramework(config, plugin_manager=plugin_manager)
-```
-
-## 📊 Example: Math Olympiad Problem Generator
-
-Here's a complete example of generating math olympiad problems:
-
-```python
-from weave import WeaveFramework
-from weave.data_sources import MathOlympiadSource
-from weave.data_processors import MathProcessor
-from weave.prompt_templates import MathPromptTemplate
-
-config = {
-    'pipeline': {
-        'type': 'math_olympiad',
-        'stages': ['source', 'process', 'generate', 'validate']
-    },
-    'data_source': {
-        'type': 'math_olympiad',
-        'difficulty_range': [3, 5],
-        'topics': ['algebra', 'geometry', 'number_theory']
+# Math generator config
+math_gen = MathGenerator(
+    problem_type="algebra",  # arithmetic, algebra, word, calculus
+    difficulty="medium",     # easy, medium, hard
+    model_connector=llm,
+    noisers=[persona_noiser],
+    config={
+        "max_attempts": 3,
+        "timeout": 30.0,
+        "validate_solutions": True
     }
-}
+)
 
-async def generate_math_problems():
-    framework = WeaveFramework(config)
-    problems = await framework.generate_dataset(num_samples=10)
-    return problems
+# Code generator config
+code_gen = CodeGenerator(
+    problem_type="algorithm",    # algorithm, data_structure, system_design, bug_fixing
+    language="python",          # python, javascript, java, cpp, go, rust, typescript
+    difficulty="medium",
+    model_connector=llm,
+    config={
+        "include_tests": True,
+        "add_comments": True,
+        "style_guide": "pep8"
+    }
+)
+
+# NLU generator config
+nlu_gen = NLUGenerator(
+    task_type="classification",  # classification, qa, summarization, ner, paraphrase
+    difficulty="medium",
+    model_connector=llm,
+    config={
+        "include_metadata": True,
+        "return_confidence": True,
+        "multiple_labels": False
+    }
+)
 ```
 
-## 🛠️ Development
+## 🔍 Error Handling
 
-### Installation
+The framework provides comprehensive error handling:
 
-```bash
-pip install weave-framework
+```python
+from weave.core import GenerationError, ModelError
+
+try:
+    problem, solution = await math_gen.generate()
+except GenerationError as e:
+    print(f"Generation failed: {e}")
+except ModelError as e:
+    print(f"Model error: {e}")
 ```
 
-### Running Tests
+## 📊 Monitoring and Metrics
 
-```bash
-pytest tests/
+Track token usage and costs with OpenAI:
+
+```python
+# Get token usage statistics
+usage = llm.get_token_usage()
+print(f"Total tokens: {usage['total_tokens']}")
+print(f"Prompt tokens: {usage['prompt_tokens']}")
+print(f"Completion tokens: {usage['completion_tokens']}")
+
+# Estimate costs
+cost = llm.estimate_cost()
+print(f"Estimated cost: ${cost:.4f}")
 ```
-
-### Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🤝 Support
-
-- 📄 [Documentation](docs/)
-- 💬 [Discord Community](https://discord.gg/weave)
-- 📧 [Email Support](mailto:support@weaveframework.com)
-
-
 
 ## Contributing
 
@@ -285,6 +265,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Disclaimer
 
-This project is under active development. APIs may change, and features may be added or removed. It's a learning project and is not intended for production use as of now.
-```
+This project is under active development. APIs may change, and features may be added or removed. Use in production environments is not recommended at this stage.
+"""
 

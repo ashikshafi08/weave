@@ -1,76 +1,64 @@
-# weave/core/exceptions.py
-
-class WeaveException(Exception):
-    """Base exception class for all Weave-related exceptions."""
+class WeaveError(Exception):
+    """Base exception class for all Weave-related errors."""
     pass
 
-class ConfigurationError(WeaveException):
-    """Exception raised for configuration-related errors."""
+class ConfigurationError(WeaveError):
+    """Raised when there's an error in component configuration."""
     pass
 
-class PipelineConfigurationError(ConfigurationError):
-    """Exception raised for pipeline configuration errors."""
+class ValidationError(WeaveError):
+    """Raised when validation fails or produces invalid results."""
     pass
 
-class PipelineExecutionError(WeaveException):
-    """Exception raised for errors during pipeline execution."""
+class GenerationError(WeaveError):
+    """Raised when data generation fails."""
     pass
 
-class DataSourceError(WeaveException):
-    """Exception raised for errors related to data sources."""
+class NoiserError(WeaveError):
+    """Raised when data augmentation/noising fails."""
     pass
 
-class DataProcessingError(WeaveException):
-    """Exception raised for errors during data processing."""
+class ModelError(WeaveError):
+    """Raised when there's an error with model operations (API calls, etc.)."""
     pass
 
-class DataGenerationError(WeaveException):
-    """Exception raised for errors during data generation."""
+class ModelConnectionError(ModelError):
+    """Raised when connecting to a model endpoint fails."""
     pass
 
-class ValidationError(WeaveException):
-    """Exception raised for data validation errors."""
+class ModelAPIError(ModelError):
+    """Raised when an API call to a model service fails."""
     pass
 
-class LLMError(WeaveException):
-    """Exception raised for errors related to LLM operations."""
+class ModelTokenLimitError(ModelError):
+    """Raised when a prompt exceeds the model's token limit."""
     pass
 
-class RateLimitError(LLMError):
-    """Exception raised when LLM rate limit is exceeded."""
+class PipelineError(WeaveError):
+    """Raised when there's an error in the orchestration pipeline."""
     pass
 
-class PluginError(WeaveException):
-    """Exception raised for plugin-related errors."""
+class DataError(WeaveError):
+    """Raised when there's an issue with data format or content."""
     pass
 
-class PromptError(WeaveException):
-    """Exception raised for errors related to prompt management."""
+class StorageError(WeaveError):
+    """Raised when there's an error storing or retrieving data."""
     pass
 
-
-class DataQualityError(WeaveException):
-    """Exception raised when generated data doesn't meet quality requirements."""
+class ResourceExhaustedError(WeaveError):
+    """Raised when a resource limit is reached (API quota, memory, etc.)."""
     pass
 
-class PromptTemplateError(WeaveException):
-    """Exception raised for errors in prompt template formatting or rendering."""
-    pass
+class InvalidArgumentError(WeaveError):
+    """Raised when an invalid argument is passed to a function."""
+    def __init__(self, argument_name: str, message: str):
+        self.argument_name = argument_name
+        super().__init__(f"Invalid argument '{argument_name}': {message}")
 
-class LLMResponseError(LLMError):
-    """Exception raised when LLM response is invalid or cannot be parsed."""
-    pass
-
-class DataSourceEmptyError(DataSourceError):
-    """Exception raised when a data source is empty or exhausted."""
-    pass
-
-class InvalidPluginError(PluginError):
-    """Exception raised when a plugin doesn't implement required interfaces."""
-    pass
-
-class PipelineStageError(PipelineExecutionError):
-    """Exception raised when a specific pipeline stage fails."""
-    def __init__(self, stage_name: str, message: str):
-        self.stage_name = stage_name
-        super().__init__(f"Stage '{stage_name}' failed: {message}")
+class NotImplementedInBaseClassError(WeaveError):
+    """Raised when an abstract method is not implemented by a subclass."""
+    def __init__(self, class_name: str, method_name: str):
+        super().__init__(
+            f"Method '{method_name}' must be implemented by subclass of '{class_name}'"
+        ) 

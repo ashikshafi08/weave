@@ -1,49 +1,85 @@
-# weave/core/__init__.py
+"""Core module for the Weave framework.
 
-from .framework import WeaveFramework
-from .pipeline import Pipeline
-from .data_source import DataSource
-from .data_processor import DataProcessor
-from .llm_interface import LLMInterface
-from .prompt_manager import PromptManager
-from .data_generator import DataGenerator
-from .data_validator import DataValidator
-from .plugin_manager import PluginManager
+This module provides the fundamental abstractions and utilities for synthetic
+data generation, including base classes for generators, noisers, validators,
+and orchestrators, as well as model connectivity and utility functions.
+"""
+
+# Base classes
+from .base_generator import BaseGenerator
+from .base_noiser import BaseNoiser
+from .base_validator import BaseValidator
+from .base_orchestrator import BaseOrchestrator
+
+# Model connectivity
+from .model_connector import ModelConnector, ModelType
+
+# Exceptions
 from .exceptions import (
-    WeaveException,
+    WeaveError,
     ConfigurationError,
-    PipelineConfigurationError,
-    PipelineExecutionError,
-    DataSourceError,
-    DataProcessingError,
-    DataGenerationError,
     ValidationError,
-    LLMError,
-    RateLimitError,
-    PluginError,
-    PromptError
+    GenerationError,
+    NoiserError,
+    ModelError,
+    ModelConnectionError,
+    ModelAPIError,
+    ModelTokenLimitError,
+    PipelineError,
+    DataError,
+    StorageError,
+    ResourceExhaustedError,
+    InvalidArgumentError,
+    NotImplementedInBaseClassError,
+)
+
+# Utilities
+from .utils import (
+    setup_logging,
+    load_config,
+    save_results,
+    retry_with_exponential_backoff,
+    validate_config_schema,
+    merge_configs,
+    get_timestamp,
+    calculate_metrics,
 )
 
 __all__ = [
-    "WeaveFramework",
-    "Pipeline",
-    "DataSource",
-    "DataProcessor",
-    "LLMInterface",
-    "PromptManager",
-    "DataGenerator",
-    "DataValidator",
-    "PluginManager",
-    "WeaveException",
+    # Base classes
+    "BaseGenerator",
+    "BaseNoiser",
+    "BaseValidator",
+    "BaseOrchestrator",
+    
+    # Model connectivity
+    "ModelConnector",
+    "ModelType",
+    
+    # Exceptions
+    "WeaveError",
     "ConfigurationError",
-    "PipelineConfigurationError",
-    "PipelineExecutionError",
-    "DataSourceError",
-    "DataProcessingError",
-    "DataGenerationError",
     "ValidationError",
-    "LLMError",
-    "RateLimitError",
-    "PluginError",
-    "PromptError",
-]
+    "GenerationError",
+    "NoiserError",
+    "ModelError",
+    "ModelConnectionError",
+    "ModelAPIError",
+    "ModelTokenLimitError",
+    "PipelineError",
+    "DataError",
+    "StorageError",
+    "ResourceExhaustedError",
+    "InvalidArgumentError",
+    "NotImplementedInBaseClassError",
+    
+    # Utilities
+    "setup_logging",
+    "load_config",
+    "save_results",
+    "retry_with_exponential_backoff",
+    "validate_config_schema",
+    "merge_configs",
+    "get_timestamp",
+    "calculate_metrics",
+] 
