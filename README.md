@@ -2,93 +2,82 @@
 
 ![Weave Logo](weave.png)
 
-Weave is a flexible framework for generating high-quality synthetic data using Language Models (LLMs). It provides a modular and extensible architecture that allows users to easily create, customize, and validate synthetic datasets for various applications.
+> 🚀 Transform your data with AI-powered synthetic generation and augmentation
 
-**Note: This project is in its very early stages and is being actively developed in public. Expect frequent changes and improvements.**
+Weave is a powerful Python framework that helps you create high-quality synthetic datasets using state-of-the-art Language Models. Whether you're training ML models, testing applications, or augmenting existing datasets, Weave makes it easy to generate diverse, realistic data at scale.
 
-GitHub Repository: [https://github.com/ashikshafi08/weave.git](https://github.com/ashikshafi08/weave.git)
+## ✨ Why Weave?
 
-## Installation
+- 🎯 **Production-Ready Data Generation**: Create synthetic datasets that mirror real-world complexity and edge cases
+- 🔄 **Smart Data Augmentation**: Enhance your training data with intelligent noise and variations
+- 🎨 **Style Transfer & Persona Simulation**: Generate content in different writing styles and personas
+- 🌍 **Multi-Language Support**: Work with content across different languages and domains
+- 🔍 **Context-Aware Transformations**: Maintain coherence and relevance in your synthetic data
+- 📊 **Advanced Dataset Management**: Seamlessly merge and manage synthetic and real datasets
 
-You can install weave directly from GitHub using pip:
+## 🚀 Quick Start
+
 ```bash
 pip install git+https://github.com/ashikshafi08/weave.git
 ```
 
-For development, you can clone the repository and install it in editable mode:
+```python
+from weave.noisers import StyleTransferNoiser
+from weave.llms import OpenAILLM
 
-```bash
-git clone https://github.com/ashikshafi08/weave.git
-cd weave
-pip install -e .
+# Initialize with your favorite LLM
+llm = OpenAILLM(model="gpt-4o-mini")
+
+# Create a technical writer persona
+noiser = StyleTransferNoiser(
+    model_connector=llm,
+    style_config={"style": "technical_documentation"}
+)
+
+# Transform casual text into technical documentation
+casual_text = "This code helps you make fake data that looks real"
+technical_doc = noiser.augment(casual_text)
+print(technical_doc)
+# Output: "This framework facilitates the generation of synthetic data 
+#          that accurately simulates real-world characteristics..."
 ```
 
-## Core Architecture
+## 🎯 Use Cases
 
-### 1. Base Classes
-- `BaseGenerator`: Foundation for all data generators
-- `BaseNoiser`: Abstract class for data transformation
-- `BaseOrchestrator`: Coordinates generation pipeline
-- `BaseValidator`: Validates generated data
-
-### 2. Dataset Management
-The `datasets` module provides comprehensive data handling:
-
+### Data Augmentation
 ```python
 from weave.datasets import DatasetLoader, DatasetMerger
 
-# Load data from various sources
+# Load your existing dataset
 loader = DatasetLoader()
-data = loader.load("kaggle://username/dataset/file.csv")
+real_data = loader.load("path/to/data.csv")
 
-# Merge synthetic and real data
+# Generate complementary synthetic data
+synthetic_data = generate_synthetic_samples(real_data)
+
+# Intelligently merge real and synthetic data
 merger = DatasetMerger()
-combined = merger.merge(real_data, synthetic_data, strategy="mix", ratio=0.3)
+enhanced_dataset = merger.merge(
+    real_data, 
+    synthetic_data,
+    strategy="mix",
+    ratio=0.3  # 30% synthetic data
+)
 ```
 
-### 3. Advanced Noisers
-Specialized noisers for various transformations:
-
+### Multi-Style Content Generation
 ```python
-from weave.noisers import (
-    StyleTransferNoiser,
-    LanguageNoiser,
-    DomainErrorNoiser,
-    SentimentNoiser,
-    ContextNoiser
-)
+from weave.noisers import LanguageNoiser, SentimentNoiser
 
-# Initialize LLM
-llm = OpenAILLM(
-    model="gpt-4o-mini",  # High-performance model
-    api_key="your-api-key"
-)
-
-# Style transfer
-style_noiser = StyleTransferNoiser(
-    model_connector=llm,
-    style_config={"style": "technical"}
-)
-
-# Language-specific noise
+# Create content variations
 lang_noiser = LanguageNoiser(
     model_connector=llm,
     language_config={
         "language": "en",
-        "error_types": ["grammar", "spelling"]
+        "locale": "UK"
     }
 )
 
-# Domain-specific errors
-domain_noiser = DomainErrorNoiser(
-    model_connector=llm,
-    domain_config={
-        "domain": "programming",
-        "error_categories": ["syntax", "logic"]
-    }
-)
-
-# Sentiment transformation
 sentiment_noiser = SentimentNoiser(
     model_connector=llm,
     sentiment_config={
@@ -97,83 +86,43 @@ sentiment_noiser = SentimentNoiser(
     }
 )
 
-# Context-aware transformation
-context_noiser = ContextNoiser(
-    model_connector=llm,
-    context_config={
-        "context_type": "conversation",
-        "window_sizes": {"conversation": 3}
-    }
-)
+# Transform content
+uk_text = lang_noiser.augment("Color the background blue")
+# Output: "Colour the background blue"
+
+positive_review = sentiment_noiser.augment("The service was okay")
+# Output: "The service exceeded my expectations!"
 ```
 
-### 4. Prompt Engineering
-The `prompts` module manages and optimizes prompts:
+## 📚 Documentation
 
-```python
-from weave.prompts import PromptTemplate, PromptLibrary, PromptOptimizer
+Check out our example notebooks to see Weave in action:
+- [Advanced Noising Techniques](examples/advanced_noising.ipynb)
+- [Dataset Management](examples/dataset_management.ipynb)
+- [Prompt Engineering](examples/prompt_engineering.ipynb)
 
-# Use template from library
-library = PromptLibrary()
-template = library.get_template("classification")
+## 🛠️ Features
 
-# Optimize prompts
-optimizer = PromptOptimizer(
-    model_connector=llm,
-    optimization_config={
-        "max_tokens": 150,
-        "temperature": 0.7
-    }
-)
+### Advanced Noisers
+- **Style Transfer**: Transform content between different writing styles
+- **Language Adaptation**: Handle language-specific nuances and variations
+- **Domain-Specific Errors**: Simulate realistic mistakes and edge cases
+- **Sentiment Transformation**: Adjust content tone and emotional impact
+- **Context-Aware Noising**: Maintain coherence across transformations
 
-optimized = optimizer.optimize(
-    template,
-    test_cases=test_data,
-    evaluation_fn=evaluate_classification
-)
-```
+### Dataset Tools
+- **Smart Merging**: Intelligently combine synthetic and real data
+- **Quality Validation**: Ensure synthetic data meets quality standards
+- **Format Support**: Work with CSV, JSON, JSONL, and streaming data
+- **HuggingFace Integration**: Direct access to public datasets
 
-## Extensibility
+## 🤝 Contributing
 
-### Creating Custom Components
-Extend base classes to create custom components:
+We welcome contributions! Check out our [contribution guidelines](CONTRIBUTING.md) to get started.
 
-```python
-from weave.core import BaseNoiser
+## 📄 License
 
-class CustomNoiser(BaseNoiser):
-    def augment(self, query: str) -> str:
-        # Custom implementation
-        pass
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-    def batch_augment(self, queries: List[str]) -> List[str]:
-        # Custom implementation
-        pass
-```
-
-### Plugin System
-Register custom components:
-
-```python
-from weave.core import plugin_registry
-
-@plugin_registry.register("custom_noiser")
-class CustomNoiser(BaseNoiser):
-    pass
-```
-
-## Type Safety
-All components use Python type hints and support static type checking:
-
-```python
-from typing import List, Dict, Any
-
-def process_data(data: List[Dict[str, Any]]) -> List[str]:
-    pass
-```
-
-## Examples
-Check out our example notebooks in the `examples/` directory:
-- `advanced_noising.ipynb`: Demonstrates all noiser capabilities
-- `dataset_management.ipynb`: Shows dataset handling features
-- `prompt_engineering.ipynb`: Covers prompt management and optimization
+---
+Built with ❤️ by the Weave team
