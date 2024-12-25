@@ -1,5 +1,27 @@
-"""
-# Weave Framework Components
+# weave
+
+![Weave Logo](weave.png)
+
+Weave is a flexible framework for generating high-quality synthetic data using Language Models (LLMs). It provides a modular and extensible architecture that allows users to easily create, customize, and validate synthetic datasets for various applications.
+
+**Note: This project is in its very early stages and is being actively developed in public. Expect frequent changes and improvements.**
+
+GitHub Repository: [https://github.com/ashikshafi08/weave.git](https://github.com/ashikshafi08/weave.git)
+
+## Installation
+
+You can install weave directly from GitHub using pip:
+```bash
+pip install git+https://github.com/ashikshafi08/weave.git
+```
+
+For development, you can clone the repository and install it in editable mode:
+
+```bash
+git clone https://github.com/ashikshafi08/weave.git
+cd weave
+pip install -e .
+```
 
 ## Core Architecture
 
@@ -155,4 +177,3 @@ Check out our example notebooks in the `examples/` directory:
 - `advanced_noising.ipynb`: Demonstrates all noiser capabilities
 - `dataset_management.ipynb`: Shows dataset handling features
 - `prompt_engineering.ipynb`: Covers prompt management and optimization
-"""
