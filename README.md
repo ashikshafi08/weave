@@ -96,10 +96,10 @@ positive_review = sentiment_noiser.augment("The service was okay")
 
 ## 📚 Documentation
 
-Check out our example notebooks to see Weave in action:
-- [Advanced Noising Techniques](examples/advanced_noising.ipynb)
-- [Dataset Management](examples/dataset_management.ipynb)
-- [Prompt Engineering](examples/prompt_engineering.ipynb)
+Check out our detailed guides to see Weave in action:
+- [Advanced Noising Techniques](docs/advanced_noising.md)
+- [Dataset Management](docs/dataset_management.md)
+- [Prompt Engineering](docs/prompt_engineering.md)
 
 ## 🛠️ Features
 
