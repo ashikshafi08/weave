@@ -1,13 +1,5 @@
-"""Noisers module for the Weave framework.
+"""Noisers module for text transformation and augmentation."""
 
-This module provides concrete implementations of data augmentation and noise
-injection components for enhancing synthetic data generation.
-"""
+from .context_noiser import ContextNoiser
 
-from .persona_noiser import PersonaNoiser
-from .random_typos_noiser import RandomTyposNoiser
-
-__all__ = [
-    "PersonaNoiser",
-    "RandomTyposNoiser",
-] 
+__all__ = ["ContextNoiser"] 
