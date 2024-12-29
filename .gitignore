@@ -1,0 +1,39 @@
+# Bytecode files
+*.pyc
+*.pyo
+*.pyd
+
+# Cache directories
+__pycache__/
+.cache/
+*.log
+
+# Virtual environment directories
+venv/
+env/
+ENV/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Pytest cache
+.pytest_cache/
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Distribution files
+dist/
+build/
+*.egg-info/
+*.egg
+*.whl
+
